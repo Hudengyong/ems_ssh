@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- 设置dataSource属性 -->
+	<bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+
+	<!-- 配置sessionFactory -->
+	<bean name="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 配置hibernate.cfg.xml的属性到spring配置文件中省略主文件下的hibernate配置文件 -->
+		<property name="hibernateProperties">
+			<props>
+				<!-- 数据源已经设置，需要设置hibernate 必须的和可选的参数 -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<!-- 可选参数 -->
+				<prop key="show_sql">true</prop>
+				<prop key="format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+
+		<property name="mappingDirectoryLocations" value="classpath:com/study/domain"></property>
+	</bean>
+
+	<!-- action配置 -->
+	<bean name="userAction" class="com.study.web.action.UserAction"
+		scope="prototype">
+		<property name="userService" ref="userService"></property>
+	</bean>
+	<bean name="deptAction" class="com.study.web.action.DeptAction"
+		scope="prototype">
+		<property name="deptService" ref="deptService"></property>
+	</bean>
+	<bean name="empAction" class="com.study.web.action.EmpAction"
+		scope="prototype">
+		<property name="empService" ref="empService"></property>
+	</bean>
+	<!-- service配置 -->
+	<bean name="userService" class="com.study.service.impl.UserServiceImpl">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+	<bean name="deptService" class="com.study.service.impl.DeptServiceImpl">
+		<property name="deptDao" ref="deptDao"></property>
+	</bean>
+	<bean name="empService" class="com.study.service.impl.EmpServiceImpl">
+		<property name="empDao" ref="empDao"></property>
+	</bean>
+	<!-- dao配置 -->
+	<bean name="deptDao" class="com.study.dao.impl.DeptDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean name="userDao" class="com.study.dao.impl.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="empDao" class="com.study.dao.impl.EmpDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 测试 -->
+
+	<!-- 配置事务的xml方式 -->
+	<!-- 1.配置核心事务管理器 -->
+	<bean name="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 配置通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" />
+			<tx:method name="del*" />
+			<tx:method name="update*" />
+			<tx:method name="edit*" />
+			<tx:method name="query*" read-only="true" />
+			<tx:method name="list*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<!-- 配置织入 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.study.service.impl.*ServiceImpl.*(..))"
+			id="txPointcut" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />
+	</aop:config>
+
+</beans>
+	

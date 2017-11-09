@@ -1,0 +1,6 @@
+[
+		{ "id":"11", "pId":"0", "name":"部门管理","page":""},
+		{ "id":"112", "pId":"11", "name":"部门列表","page":"/ems_ssh/pages/dept/deptlist.jsp"},
+		{ "id":"12", "pId":"0", "name":"员工管理","page":""},
+		{ "id":"121", "pId":"12", "name":"员工列表" ,"page":"/ems_ssh/pages/emp/emplist.jsp"}
+]

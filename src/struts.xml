@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+	 <package name="dept" namespace="/" extends="struts-default">
+		<action name="dept_*" class="deptAction" method="{1}">
+			<result name="success">/index.jsp</result>
+		</action>
+	</package>
+	<package name="emp" namespace="/" extends="struts-default">
+		<action name="emp_*" class="empAction" method="{1}">
+			<result name="success">/index.jsp</result>
+		</action>
+		
+	</package>
+	
+	<package name="login" namespace="/" extends="struts-default">
+		 <interceptors>
+		 <!-- 登陆控制。若是登陆过了，下一次 直接进入主页，没有，则到登陆页面 -->
+			<interceptor name="login" class="com.study.web.interceptor.LoginInterceptor">
+				<param name="excludeMethods">loginUser</param>
+			</interceptor>
+			<interceptor-stack name="loginInterceptor">
+				<interceptor-ref name="login"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors> 
+		 <default-interceptor-ref name="loginInterceptor"></default-interceptor-ref>
+		
+		<action name="user_*" class="userAction" method="{1}">
+			<result name="success" type="redirect">
+				pages/index.jsp
+			</result>  
+			<result name="error">
+				/login.jsp
+			</result>
+		</action>
+		
+	</package>
+	
+	<!-- <package name="user" namespace="/" extends="struts-default">
+		<action name="userAction_*" class="userAction" method="{1}">
+			<result name="success">/test.jsp</result>
+		</action>
+	</package> -->
+</struts>

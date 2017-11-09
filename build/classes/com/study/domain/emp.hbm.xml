@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.study.domain">
+	<class name="Emp" table="emp">
+		<id name="eid">
+			<generator class="native"></generator>
+		</id>
+		<property name="ename"></property>
+		<property name="gender"></property>
+		<property name="idcode"></property>
+		<property name="sal"></property>
+		<property name="comm"></property>
+		<property name="jobid"></property>
+		<many-to-one name="dept" column="deptno" class="Dept"></many-to-one>
+	</class>
+</hibernate-mapping>
