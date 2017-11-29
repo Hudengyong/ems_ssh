@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<h1></h1>
+<h1>2</h1>
 	<script language="javascript" type="text/javascript"> 
 		window.location.href="${pageContext.request.contextPath }/user_loginIndex"; 
 	</script> 
